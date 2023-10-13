@@ -1,29 +1,4 @@
-import flask
-
-app = flask.Flask(name)
-
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    return flask.render_template('index.html')
-
-
-@app.route('/post/new', methods=['GET', 'POST'])
-def new_post():
-    # ja metode ir POST mēs aizsūtīsim formas datus
-    # mēs ierakstam datus serverī
-    if flask.request.method == 'POST':
-        pass
-
-    # ja metode ir GET mēs dabūsim form
-    # nolasīsim datus no servera
-    elif flask.redirect.method == 'GET':
-        return flask.render_template('post_form.html')
-
-
-app.run(host='0.0.0.0', port=81, debug=True)
-
-#2
+#1
 
 <a href="{{ url_for('new_post') }}">Add new post</a>
 
@@ -33,7 +8,7 @@ app.run(host='0.0.0.0', port=81, debug=True)
     {% endfor %}
 </ul>
 
-#3
+#2
 
 import flask
 import datetime
@@ -41,10 +16,12 @@ import datetime
 app = flask.Flask(name)
 
 posts = []
+users = []
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return flask.render_template('index.html')
+    return flask.render_template('index.html',
+                                 posts=posts)
 
 
 @app.route('/post/new', methods=['GET', 'POST'])
@@ -67,9 +44,22 @@ def new_post():
         return flask.render_template('post_form.html')
 
 
+@app.route('/users/new', methods=['GET', 'POST'])
+def new_user():
+    if flask.request.method == 'POST':
+        user = {
+            'username': flask.request.form.get('username'),
+            'email': flask.request.form.get('email'),
+            'created_at': datetime.datetime.now()
+        }
+        users.append(user)
+        return "User created"
+
+    return flask.render_template('user_form.html')
+
 app.run(host='0.0.0.0', port=81, debug=True)
 
-#4
+#3
 
 <p>Created at: {{ post['created_at'] }}</p>
 <h3>{{ post['post_text'] }}</h3>
