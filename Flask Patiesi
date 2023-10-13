@@ -22,3 +22,60 @@ def new_post():
 
 
 app.run(host='0.0.0.0', port=81, debug=True)
+
+#2
+
+<a href="{{ url_for('new_post') }}">Add new post</a>
+
+<ul>
+    {% for post in posts %}
+    <li>{{ post['post_text'] }}</li>
+    {% endfor %}
+</ul>
+
+#3
+
+import flask
+import datetime
+
+app = flask.Flask(name)
+
+posts = []
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return flask.render_template('index.html')
+
+
+@app.route('/post/new', methods=['GET', 'POST'])
+def new_post():
+    # ja metode ir POST mēs aizsūtīsim formas datus
+    # mēs ierakstam datus serverī
+    if flask.request.method == 'POST':
+        post_text = flask.request.form.get('post_text')
+        post = {
+            'post_text': post_text,
+            'created_at': datetime.datetime.now(),
+        }
+        posts.append(post)
+        return flask.render_template('post.html',
+                                     post=post)
+
+    # ja metode ir GET mēs dabūsim form
+    # nolasīsim datus no servera
+    elif flask.request.method == 'GET':
+        return flask.render_template('post_form.html')
+
+
+app.run(host='0.0.0.0', port=81, debug=True)
+
+#4
+
+<p>Created at: {{ post['created_at'] }}</p>
+<h3>{{ post['post_text'] }}</h3>
+post_form.html
+<form action="" method="post">
+    <p>Tell us your thoughts</p>
+    <textarea name="post_text" cols="30" rows="10"></textarea> <br>
+    <input type="submit">
+</form>
